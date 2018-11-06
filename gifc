@@ -1,0 +1,150 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import argparse
+import requests
+import yaml
+import pprint
+#import json
+
+parser = argparse.ArgumentParser(description='Github gists from command line')
+#Get gists
+parser.add_argument('-g', '--gists', help='Get n gists and their descriptions', type=int)
+#Create gists
+parser.add_argument('-c','--create', help='Full file name')
+parser.add_argument('-e','--explain', help='Explain, elucidate or expound the gist')
+parser.add_argument('-p','--public', help='Make a public gist', default=False)
+parser.add_argument('-m','--message', help='Gist contents as string')
+parser.add_argument('-i','--input', help='Input file name')
+#Update gists
+parser.add_argument('-u','--update', help='Update given gist')
+parser.add_argument('-f','--file_name', help='File to update')
+parser.add_argument('-nc','--new_content', help='New content string')
+parser.add_argument('-cd','--change_description', help='Change the gist description')
+#Delete files or gists
+parser.add_argument('-d','--delete', help='Delete whole gist')
+parser.add_argument('-rm','--remove', nargs='+', help='Delete a file in a gist')
+
+args = vars(parser.parse_args())
+
+def get_config_details(key):
+    try:
+        with open('gist_config.yml', 'r') as f:
+            config = yaml.safe_load(f)
+    except:
+        print('Configuration file not found')
+        exit()
+    else:
+        if config.get(key):
+            return config[key]
+        else:
+            if key == 'TOKEN':
+                print('User token not found. Please add your token to gist_config.yaml')
+                exit()
+            elif key == 'USER_ID':
+                print('User ID not found. Please add your github user_id to gist_config.yml')
+                exit()
+
+
+#Get gists
+if args['gists']:
+    number_of_gists = int(args['gists'])
+    print('Getting gists...')
+    user_id = get_config_details('USER_ID')
+    r = requests.get(f'https://api.github.com/users/{user_id}/gists')
+    gist_list = []
+    for gist in r.json()[:number_of_gists]:
+        gist_id = gist['id']
+        gist_description = gist['description']
+        gist_files = [file_ for file_ in gist['files'].keys()]
+        gist_list.append({'Description': gist_description,'Gist ID': gist_id, 'Files': gist_files})
+    pprint.pprint(gist_list)
+
+
+# Create gists
+if args['message'] and args['input']:
+    print("Please either use a file or write a message. Both are not supported now.")
+    exit()
+
+if args['create']:
+    #print(args['create'])
+    gist_file = args['create']
+    header = {"Authorization": f"Bearer {get_config_details('TOKEN')}"}
+
+    if args['message']:
+        message = args['message']
+        payload = {'description': args['explain'], 'public': args['public'], 'files':{args['create']: {'content': message}}}
+        #print(payload)
+        r = requests.post(f"https://api.github.com/gists", headers=header, json=payload)
+        print(r.status_code)
+        if r.status_code == 201:
+            print(r.json()['id'])
+            print('Gist successfully created')
+        else:
+            print('Error creating gist. Please use GUI')
+    else:
+        file_ = args['input']
+        with open(file_, 'r') as f:
+            f2s = f.read()
+        payload = {'description': args['explain'], 'public': args['public'], 'files':{args['create']: {'content': f2s}}}
+        r = requests.post(f"https://api.github.com/gists", headers=header, json=payload)
+        print(r.status_code)
+        if r.status_code == 201:
+            print(r.json()['id'])
+            print('Gist successfully created')
+        else:
+            print('Error creating gist. Please use GUI')
+
+
+#Update gists
+if args['update']:
+    gid = args['update']
+    header = {"Authorization": f"Bearer {get_config_details('TOKEN')}"}
+    payload = dict()
+    #file content changes
+    if args['new_content']:
+        payload['files'] = {args['file_name']:{'content': args['new_content']}}
+        #gist description changes
+    if args['change_description']:
+        payload['description'] = args['change_description']
+
+    r = requests.patch(f'https://api.github.com/gists/{gid}', headers=header, json=payload)
+    print(r.status_code)
+    if r.status_code == 200:
+        print("Gist successfully updated")
+    else:
+        print("Gist failed to update. Please use GUI.")
+
+
+#Delete files or gists
+if args['delete'] and args['remove']:
+    print("Please EITHER delete a gist or remove a file from the gist")
+    exit()
+
+if args['delete']:
+    gid = args['delete']
+    print(f'Deleting {gid}')
+    token = get_config_details('TOKEN')
+    header = {'Authorization': f'Bearer {token}'}
+
+    r = requests.delete(f'https://api.github.com/gists/{gid}', headers=header)
+    #print(r.status_code)
+    if r.status_code != 204:
+        print('Request not completed. Maybe the gist_id is incorrect. Please try the GUI.')
+        exit()
+    print('Gist deleted.')
+
+if args['remove']:
+    gid = args['remove'][0]
+    files = args['remove'][1:]
+    pprint.pprint(f'Deleting file(s) {files}')
+    token = get_config_details('TOKEN')
+    header = {'Authorization': f'Bearer {token}'}
+    #print(files, len(files))
+    file_del_payload = dict(zip(files,[None]*len(files)))
+    payload = {"files": file_del_payload}
+    r = requests.patch(f'https://api.github.com/gists/{gid}', headers=header, json=payload)
+    #data vs json when you have to pass "null" as json.
+    if r.status_code != 200:
+        print('Request not completed. Please try the GUI.')
+        exit()
+    print('File(s) deleted.')
