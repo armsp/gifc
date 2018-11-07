@@ -1,4 +1,5 @@
 ## TODO
+0. Ability to just append to a gist.
 1. Add support to update a file in a gist with the contents of a local file
 2. Use urllib instead of requests so that only standard libraries are used
 3. Improve the arguements.
