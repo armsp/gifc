@@ -36,29 +36,31 @@ Currently there is no way it can access your `gist_config.yml` file if you take 
 
 ## **Example usage**
 ### **Get a list of gists**
-`./gifc -g 5`
+`./gifc get 5`
 
 ### **Create a gist**
+* Create interactively from an editor like **nano**, **vim** or **gedit**
+    - ```./gifc create create.md -d "How to create a gist from cli" -i nano```
 * Directly enter contents from cli
-    - ```./gifc -c create.md -e "How to create a gist from cli" -m '''If you want to create a gist from an existing file then you do the following-  `./gifc -c create.md -e "How to create a gist from cli" -i file.md`'''```
+    - ```./gifc create create.md -d "How to create a gist from cli" -m '''If you want to create a gist from an existing file then you do the following-  `./gifc -c create.md -e "How to create a gist from cli" -i file.md`'''```
 * Take the contents from a file
-    - `./gifc -c create.md -e "How to create a gist from cli" -i file.md`
+    - `./gifc create create.md -d "How to create a gist from cli" -f file.md`
 
 ### **Update a gist**
 * Change description
-    - `./gifc -u ffd2f4a482684f56bf33c8726cc6ae63 -cd "New description"`  
+    - `./gifc update ffd2f4a482684f56bf33c8726cc6ae63 -cd "New description"`  
     You can get the gist id from the `get` method from earlier
 
-* Edit contents of a file
-    - `./gifc -u ffd2f4a482684f56bf33c8726cc6ae63 -f file_to_update.md -nc "New contents of the file"`
+* Edit contents of a file interactively in an editor like **nano**, **vim** or **gedit**
+    - `./gifc update ffd2f4a482684f56bf33c8726cc6ae63 -f file_to_update.md`
 * Do both
-    - `./gifc -u ffd2f4a482684f56bf33c8726cc6ae63 -f file_to_update.md -cd "New description" -nc "New contents of the file"`
+    - `./gifc -u ffd2f4a482684f56bf33c8726cc6ae63 -f file_to_update.md -cd "New description"`
 
 ### **Delete file(s) from a gist**
-`./gifc -rm ffd2f4a482684f56bf33c8726cc6ae63 file1.md script.py readme.txt `  
+`./gifc remove ffd2f4a482684f56bf33c8726cc6ae63 -r file1.md script.py readme.txt `  
 You can get the gist id from the `get` method from earlier
 
 ### **Delete the whole gist**
-`./gifc -d ffd2f4a482684f56bf33c8726cc6ae63`  
+`./gifc delete ffd2f4a482684f56bf33c8726cc6ae63`  
 You can get the gist id from the `get` method from earlier
 

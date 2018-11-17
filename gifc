@@ -4,27 +4,41 @@ import argparse
 import requests
 import yaml
 import pprint
-#import json
+import subprocess
+import tempfile
+import os
 
 parser = argparse.ArgumentParser(description='Github gists from command line')
-#Get gists
-parser.add_argument('-g', '--gists', help='Get n gists and their descriptions', type=int)
-#Create gists
-parser.add_argument('-c','--create', help='Full file name')
-parser.add_argument('-e','--explain', help='Explain, elucidate or expound the gist')
-parser.add_argument('-p','--public', help='Make a public gist', default=False)
-parser.add_argument('-m','--message', help='Gist contents as string')
-parser.add_argument('-i','--input', help='Input file name')
-#Update gists
-parser.add_argument('-u','--update', help='Update given gist')
-parser.add_argument('-f','--file_name', help='File to update')
-parser.add_argument('-nc','--new_content', help='New content string')
-parser.add_argument('-cd','--change_description', help='Change the gist description')
-#Delete files or gists
-parser.add_argument('-d','--delete', help='Delete whole gist')
-parser.add_argument('-rm','--remove', nargs='+', help='Delete a file in a gist')
+sp = parser.add_subparsers(dest='main')
+sp.required = True
 
-args = vars(parser.parse_args())
+#Get gists
+p1 = sp.add_parser('get')
+p1.add_argument('number', help='Get <number> gists and their descriptions', type=int)
+#Create gists
+p2 = sp.add_parser('create')
+p2.add_argument('gist_item', help='Gist full file name')
+p2.add_argument('-d', '--describe', required=True, help='Gist description')
+p2.add_argument('-p','--public', help='Make a public gist', default=False)
+p2_mutex = p2.add_mutually_exclusive_group()
+p2_mutex.add_argument('-m','--message', help='Gist contents from cli as string')
+p2_mutex.add_argument('-f','--file', help='Gist contents from a local file')
+p2_mutex.add_argument('-i','--interactive', nargs='?', action='store', choices=['vi', 'nano', 'gedit'], help='Get contents of the gist right now from an editor')
+#Update gists
+p3 = sp.add_parser('update')
+p3.add_argument('gist_id', help='Gist id(sha) of the gist you want to update')
+p3.add_argument('-f','--file_name', required=True, help='File name of the file inside the gist you are updating')
+#parser.add_argument('-nc','--new_content', help='New content string')
+p3.add_argument('-cd','--change_description', help='Change the gist description')
+#Delete gists
+p4 = sp.add_parser('delete')
+p4.add_argument('gist_id', help='Gist id(sha) of the gist you want to delete')
+#Delete files
+p5 = sp.add_parser('remove')
+p5.add_argument('gist_id', help='Gist id(sha) of the gist you want to remove files from')
+p5.add_argument('-r', '--remove', nargs='+', required=True, help='File(s) you want to remove from a gist')
+
+args = parser.parse_args()
 
 def get_config_details(key):
     try:
@@ -44,10 +58,25 @@ def get_config_details(key):
                 print('User ID not found. Please add your github user_id to gist_config.yml')
                 exit()
 
+class Color:
+    red = '\x1b[1;31;40m'
+    green = '\x1b[1;32;40m'
+    yellow = '\x1b[1;33;40m'
+    white = '\x1b[1;37;40m'
+    bold = '\033[1m'
+    end = '\x1b[0m'
+
+def pretty_print(gist_list):
+    for gist in gist_list:
+        print('Description: ', Color.red+gist['Description']+Color.end)
+        print('Files      : ', gist['Files'])
+        print('Gist ID    : ', Color.white+gist['Gist ID']+Color.end)
+        print('><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><')
+
 
 #Get gists
-if args['gists']:
-    number_of_gists = int(args['gists'])
+if args.main == 'get':
+    number_of_gists = args.number
     print('Getting gists...')
     user_id = get_config_details('USER_ID')
     r = requests.get(f'https://api.github.com/users/{user_id}/gists')
@@ -57,22 +86,18 @@ if args['gists']:
         gist_description = gist['description']
         gist_files = [file_ for file_ in gist['files'].keys()]
         gist_list.append({'Description': gist_description,'Gist ID': gist_id, 'Files': gist_files})
-    pprint.pprint(gist_list)
+    pretty_print(gist_list)
 
 
 # Create gists
-if args['message'] and args['input']:
-    print("Please either use a file or write a message. Both are not supported now.")
-    exit()
-
-if args['create']:
+if args.main == 'create':
     #print(args['create'])
-    gist_file = args['create']
+    gist_file = args.gist_item
     header = {"Authorization": f"Bearer {get_config_details('TOKEN')}"}
 
-    if args['message']:
-        message = args['message']
-        payload = {'description': args['explain'], 'public': args['public'], 'files':{args['create']: {'content': message}}}
+    if args.message:
+        message = args.message
+        payload = {'description': args.describe, 'public': args.public, 'files':{args.gist_item : {'content': message}}}
         #print(payload)
         r = requests.post(f"https://api.github.com/gists", headers=header, json=payload)
         print(r.status_code)
@@ -81,11 +106,11 @@ if args['create']:
             print('Gist successfully created')
         else:
             print('Error creating gist. Please use GUI')
-    else:
-        file_ = args['input']
+    elif args.file:
+        file_ = args.file
         with open(file_, 'r') as f:
             f2s = f.read()
-        payload = {'description': args['explain'], 'public': args['public'], 'files':{args['create']: {'content': f2s}}}
+        payload = {'description': args.describe, 'public': args.public, 'files':{args.gist_item : {'content': f2s}}}
         r = requests.post(f"https://api.github.com/gists", headers=header, json=payload)
         print(r.status_code)
         if r.status_code == 201:
@@ -93,19 +118,48 @@ if args['create']:
             print('Gist successfully created')
         else:
             print('Error creating gist. Please use GUI')
+    else:
+        f = tempfile.NamedTemporaryFile(mode='w+t', delete=False)
+        f_name = f.name
+        f.close()
+        subprocess.run(['nano', f_name])
+        with open(f_name) as f:
+            contents = f.read()
+
+        payload = {'description': args.describe, 'public': args.public, 'files':{args.gist_item : {'content': contents}}}
+        r = requests.post(f"https://api.github.com/gists", headers=header, json=payload)
+        if r.status_code == 201:
+            print(r.status_code)
+            print(r.json()['id'])
+            print('Gist successfully created')
+        else:
+            print('Creating gist failed')
 
 
 #Update gists
-if args['update']:
-    gid = args['update']
+if args.main == 'update':
+    gid = args.gist_id
     header = {"Authorization": f"Bearer {get_config_details('TOKEN')}"}
     payload = dict()
     #file content changes
-    if args['new_content']:
-        payload['files'] = {args['file_name']:{'content': args['new_content']}}
-        #gist description changes
-    if args['change_description']:
-        payload['description'] = args['change_description']
+    if args.file_name:
+        r = requests.get(f'https://api.github.com/gists/{gid}')
+        if r.status_code != 200:
+            print('Error getting gist contents for interactive mode')
+            exit()
+        f = tempfile.NamedTemporaryFile(mode='w+t', delete=False)
+        n = f.name
+        content = r.json()['files'][args.file_name]['content']
+        f.write(content)
+        f.close()
+        subprocess.run(['nano', n])
+        with open(n, 'r') as f:
+            new_content = f.read()
+        payload['files'] = {args.file_name :{'content': new_content}}
+        os.remove(n)
+    #gist description changes
+    if args.change_description:
+        payload['description'] = args.change_description
 
     r = requests.patch(f'https://api.github.com/gists/{gid}', headers=header, json=payload)
     print(r.status_code)
@@ -116,12 +170,8 @@ if args['update']:
 
 
 #Delete files or gists
-if args['delete'] and args['remove']:
-    print("Please EITHER delete a gist or remove a file from the gist")
-    exit()
-
-if args['delete']:
-    gid = args['delete']
+if args.main == 'delete':
+    gid = args.gist_id
     print(f'Deleting {gid}')
     token = get_config_details('TOKEN')
     header = {'Authorization': f'Bearer {token}'}
@@ -133,15 +183,16 @@ if args['delete']:
         exit()
     print('Gist deleted.')
 
-if args['remove']:
-    gid = args['remove'][0]
-    files = args['remove'][1:]
+if args.main == 'remove':
+    gid = args.gist_id
+    files = args.remove
     pprint.pprint(f'Deleting file(s) {files}')
     token = get_config_details('TOKEN')
     header = {'Authorization': f'Bearer {token}'}
     #print(files, len(files))
     file_del_payload = dict(zip(files,[None]*len(files)))
     payload = {"files": file_del_payload}
+    print(payload)
     r = requests.patch(f'https://api.github.com/gists/{gid}', headers=header, json=payload)
     #data vs json when you have to pass "null" as json.
     if r.status_code != 200:
