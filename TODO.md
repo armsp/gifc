@@ -91,6 +91,8 @@ if r.status_code == 201:
 else:
     print('Creating gist failed')
 ```
+9. Get method doesn't work for private gists. May have to use [OAuth](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/) for that.
+
 ## It is NOT meant to replace the GUI neither does it attempt to.
 
 ## Features we will never have
