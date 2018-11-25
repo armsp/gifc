@@ -92,7 +92,7 @@ else:
     print('Creating gist failed')
 ```
 9. Get method doesn't work for private gists. May have to use [OAuth](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/) for that.
-
+10. Instead of using `__file__` as in `foo_config = open(os.path.join(os.path.dirname(__file__),'foo.conf').read()` or ```cwd = os.path.dirname(os.path.abspath(__file__))```, use `pkg_resources` instead. [Help1](http://peak.telecommunity.com/DevCenter/PythonEggs#accessing-package-resources), [Help2](https://setuptools.readthedocs.io/en/latest/pkg_resources.html#resourcemanager-api)
 ## It is NOT meant to replace the GUI neither does it attempt to.
 
 ## Features we will never have
