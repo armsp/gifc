@@ -1,5 +1,5 @@
 ## TODO
-0. Ability to just append to a gist. - [x]
+0. - [x] Ability to just append to a gist.
 1. Add support to update a file in a gist with the contents of a local file
 2. Use urllib instead of requests so that only standard libraries are used
     - **GET**ting the json data
@@ -13,15 +13,15 @@
     - **PATCH**ing the resource
     - **DELETE**ing the resource
  
-3. Improve the arguements. - [x]
-4. Make it more intuitive to use. - [x]
-5. Add Demo gif - []
+3. - [x] Improve the arguements.
+4. - [x] Make it more intuitive to use.
+5. - [ ] Add Demo gif
 6. Make it callable from cli itself i.e remove any `config.yml` files
     - Environment Variables
         >$ export DUMMY="dum dum" <br> $ python3 <br> >>> import os <br> >>> "DUMMY" in os.environ <br> True <br> >>> os.environ['DUMMY'] <br> 'dum dum'<br>
 
         * Shell, shell and its processes, local, systemwide [environment var setup](https://askubuntu.com/questions/58814/how-do-i-add-environment-variables)
-7. Seeing the contents of the file you want to append to or edit. - [x]  
+7. - [x] Seeing the contents of the file you want to append to or edit.  
 POC   
 ```python
 import os
@@ -43,7 +43,7 @@ with open(n) as f:
 f.close()
 os.remove(n)
 ```
-8. Creating gists from the editor - [x]  
+8. - [x] Creating gists from the editor  
 POC  
 ```python
 #!/usr/bin/env python3
@@ -103,7 +103,7 @@ if r.status_code == 201:
 else:
     print('Creating gist failed')
 ```
-9. Get method doesn't work for private gists. May have to use [OAuth](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/) for that. - []
+9. - [ ] Get method doesn't work for private gists. May have to use [OAuth](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/) for that.
 10. Instead of using `__file__` as in `foo_config = open(os.path.join(os.path.dirname(__file__),'foo.conf').read()` or ```cwd = os.path.dirname(os.path.abspath(__file__))```, use `pkg_resources` instead. [Help1](http://peak.telecommunity.com/DevCenter/PythonEggs#accessing-package-resources), [Help2](https://setuptools.readthedocs.io/en/latest/pkg_resources.html#resourcemanager-api)
 ## It is NOT meant to replace the GUI neither does it attempt to.
 
