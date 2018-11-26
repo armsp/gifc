@@ -2,6 +2,19 @@
 0. Ability to just append to a gist.
 1. Add support to update a file in a gist with the contents of a local file
 2. Use urllib instead of requests so that only standard libraries are used
+
+ - Getting the json data
+ 
+ ```python
+ import urllib.request
+ url = 'https://jsonplaceholder.typicode.com/posts'
+ r = urllib.request.urlopen(url).read()
+ data = json.loads(r.decode('utf-8'))
+ ```
+ - POSTing the resource
+ - PATCHing the resource
+ - DELETEing the resource
+ 
 3. Improve the arguements.
 4. Make it more intuitive to use.
 5. Add Demo gif
