@@ -1,22 +1,20 @@
 ## TODO
-0. Ability to just append to a gist.
+0. Ability to just append to a gist. [x]
 1. Add support to update a file in a gist with the contents of a local file
 2. Use urllib instead of requests so that only standard libraries are used
-
- - Getting the json data
+    - **GET**ting the json data
+    ```python
+    import urllib.request
+    url = 'https://jsonplaceholder.typicode.com/posts'
+    r = urllib.request.urlopen(url).read()
+    data = json.loads(r.decode('utf-8'))
+    ```
+    - **POST**ing the resource
+    - **PATCH**ing the resource
+    - **DELETE**ing the resource
  
- ```python
- import urllib.request
- url = 'https://jsonplaceholder.typicode.com/posts'
- r = urllib.request.urlopen(url).read()
- data = json.loads(r.decode('utf-8'))
- ```
- - POSTing the resource
- - PATCHing the resource
- - DELETEing the resource
- 
-3. Improve the arguements.
-4. Make it more intuitive to use.
+3. Improve the arguements. [x]
+4. Make it more intuitive to use. [x]
 5. Add Demo gif
 6. Make it callable from cli itself i.e remove any `config.yml` files
  - Environment Variables
@@ -110,4 +108,4 @@ else:
 
 ## Features we will never have
 1. Add support for creating multiple file gists
-2. Add support to update multiples in a gist
+2. Add support to update multiple files in a gist
