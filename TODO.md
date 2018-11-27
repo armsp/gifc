@@ -1,6 +1,11 @@
 ## TODO
 0. - [x] Ability to just append to a gist.
 1. Add support to update a file in a gist with the contents of a local file
+2. Get gist by id (`gifc get -id ffg564g4hfh..`)
+3. Search gists based on keywords (display answer based on completeness of match) [`gifc search curry`]-
+    * Search by title
+    * Search in description contents
+    * Search in gist contents
 2. Use urllib instead of requests so that only standard libraries are used
     - **GET**ting the json data
     ```python
