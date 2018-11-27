@@ -15,6 +15,20 @@
     data = json.loads(r.decode('utf-8'))
     ```
     - **POST**ing the resource
+    ```python
+    import json
+    import urllib.request
+    import urllib.parse
+    d = {"spam": 1, "eggs": 2, "bacon": 0}
+    #data = urllib.parse.urlencode(d)
+    data = json.dumps(d)
+    data = data.encode()
+    req = urllib.request.Request("http://localhost:5000/random", data)
+    req.add_header('Content-Type', 'application/json')
+    req.add_header('Authorization', 12345)
+    with urllib.request.urlopen(req) as f:
+        print(f.read().decode('utf-8'))
+    ```
     - **PATCH**ing the resource
     - **DELETE**ing the resource
  
