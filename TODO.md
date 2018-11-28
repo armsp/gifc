@@ -30,7 +30,19 @@
         print(f.read().decode('utf-8'))
     ```
     - **PATCH**ing the resource
+    ```python
+    req = urllib.request.Request("http://localhost:5000/random", data, method='PATCH')
+    #req.get_method = lambda: 'PATCH'
+    with urllib.request.urlopen(req) as f:
+    print(f.read().decode('utf-8'))
+    ```
     - **DELETE**ing the resource
+    ```python
+    req = urllib.request.Request("http://localhost:5000/random", data, method='DELETE')
+    #req.get_method = lambda: 'DELETE'
+    with urllib.request.urlopen(req) as f:
+    print(f.read().decode('utf-8'))
+    ```
  
 3. - [x] Improve the arguements.
 4. - [x] Make it more intuitive to use.
