@@ -3,10 +3,10 @@
 1. Add support to update a file in a gist with the contents of a local file
 2. Get gist by id (`gifc get -id ffg564g4hfh..`)
 3. Search gists based on keywords (display answer based on completeness of match) [`gifc search curry`]-
-    * Search by title
-    * Search in description contents
-    * Search in gist contents
-2. Use urllib instead of requests so that only standard libraries are used
+    * Search by title (`gifc search -t <title>`)
+    * Search in description contents (`gifc search -d <description contents>`)
+    * Search in gist contents (`gifc search -c <body content>`)
+2. - [x] Use urllib instead of requests so that only standard libraries are used
     - **GET**ting the json data
     ```python
     import urllib.request
