@@ -1,4 +1,5 @@
 ## TODO
+0. - [x] Callable as `gifc` from cli via `pip install gifc` as a script.(To be released in a week)
 0. - [x] Ability to just append to a gist.
 1. Add support to update a file in a gist with the contents of a local file
 2. Get gist by id (`gifc get -id ffg564g4hfh..`)
