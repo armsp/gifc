@@ -136,7 +136,26 @@ else:
     print('Creating gist failed')
 ```
 9. - [ ] Get method doesn't work for private gists. May have to use [OAuth](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/) for that.
+11. - [ ] Requests raises exceptions inherited from RequestException that you are not catching. So commands like `r = request.post(....)` can fail on bad internet connections or because other random issues. Catch them like -  
+        ```python
+        except requests.exceptions.RequestException as e:  # This is the correct syntax
+            print e
+        ```
+        OR
+        ```python
+        except requests.exceptions.Timeout:
+            # Maybe set up for a retry, or continue in a retry loop
+        except requests.exceptions.TooManyRedirects:
+            # Tell the user their URL was bad and try a different one
+        except requests.exceptions.RequestException as e:
+            # catastrophic error. bail.
+            print e
+        ```
+12. Handle FileNotFoundError in creating of gists via file parameter.
 10. Instead of using `__file__` as in `foo_config = open(os.path.join(os.path.dirname(__file__),'foo.conf').read()` or ```cwd = os.path.dirname(os.path.abspath(__file__))```, use `pkg_resources` instead. [Help1](http://peak.telecommunity.com/DevCenter/PythonEggs#accessing-package-resources), [Help2](https://setuptools.readthedocs.io/en/latest/pkg_resources.html#resourcemanager-api)
+13. Displaying gists in cli
+14. Update is still hardcoded with `nano`. Can we open it in system default editor?
+15. If no file arguement and description is given in update then open the first file in that gist in interactive mode for editing ?
 ## It is NOT meant to replace the GUI neither does it attempt to.
 
 ## Features we will never have
