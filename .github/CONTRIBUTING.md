@@ -8,4 +8,7 @@
 * Make a seperate branch for every pull request.
 * Don't push a lot of code in a single commit.
 * Make pull requests to the **development** branch. After merging I will eventually decide when to merge it with the master.
+* Follow the TODO.md file for ideas, issues and functionalities that you may want to fix/add.
+* Make issues for any bugs you find.
+* Please give a working example that I can reproduce for any issue you raise.
 * Please be patient with my responses and reviews. I will be quite busy for the next 6 months.
