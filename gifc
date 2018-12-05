@@ -23,12 +23,12 @@ p2.add_argument('-p','--public', help='Make a public gist', default=False)
 p2_mutex = p2.add_mutually_exclusive_group()
 p2_mutex.add_argument('-m','--message', help='Gist contents from cli as string')
 p2_mutex.add_argument('-f','--file', help='Gist contents from a local file')
-p2_mutex.add_argument('-i','--interactive', nargs='?', action='store', choices=['vi', 'nano', 'gedit'], help='Get contents of the gist right now from an editor')
+p2_mutex.add_argument('-i','--interactive', nargs='?', action='store', choices=['vi', 'nano', 'gedit'], help='Create contents of the gist right now from an editor')
 #Update gists
 p3 = sp.add_parser('update')
 p3.add_argument('gist_id', help='Gist id(sha) of the gist you want to update')
 p3.add_argument('-f','--file_name', nargs='?', action='store', help='File name of the file inside the gist you are updating')
-#parser.add_argument('-nc','--new_content', help='New content string')
+p3.add_argument('-i', '--interactive', nargs='?', action='store', choices=['vi', 'nano', 'gedit'], help='Edit contents of the gist in an editor')
 p3.add_argument('-cd','--change_description', nargs='?', action='store', help='Change the gist description')
 #Delete gists
 p4 = sp.add_parser('delete')
@@ -137,6 +137,8 @@ if args.main == 'create':
 
 #Update gists
 if args.main == 'update':
+    if not args.file_name and not args.interactive and not args.change_description:
+        parser.error('Please provide either file to edit, a description change or an editor for interactive mode')
     gid = args.gist_id
     header = {"Authorization": f"Bearer {get_config_details('GIT_TOKEN')}"}
     payload = dict()
@@ -156,6 +158,25 @@ if args.main == 'update':
             new_content = f.read()
         payload['files'] = {args.file_name :{'content': new_content}}
         os.remove(n)
+    else:
+        if args.interactive:
+            get_gist = requests.get(f'https://api.github.com/gists/{gid}')
+            gist_files = get_gist.json()['files']
+            if len(gist_files) > 1:
+                print(Color.red+'There are multiple files in this gist'+Color.end)
+            file_content_dict = dict()
+            for gist_file_name, gist_file_meta in gist_files.items():
+                f = tempfile.NamedTemporaryFile(mode='w+t', delete=False)
+                n = f.name
+                content = gist_file_meta['content']
+                f.write(content)
+                f.close()
+                subprocess.run([args.interactive, n])
+                with open(n, 'r') as f:
+                    new_content = f.read()
+                file_content_dict[gist_file_name] = {'content': new_content}
+                os.remove(n)
+            payload['files'] = file_content_dict
     #gist description changes
     if args.change_description:
         payload['description'] = args.change_description
