@@ -19,7 +19,7 @@ p1.add_argument('number', help='Get <number> gists and their descriptions', type
 p2 = sp.add_parser('create')
 p2.add_argument('gist_item', help='Gist full file name')
 p2.add_argument('-d', '--describe', required=True, help='Gist description')
-p2.add_argument('-p','--public', help='Make a public gist', default=False)
+p2.add_argument('-p','--public', help='Make a public gist', default='false')
 p2_mutex = p2.add_mutually_exclusive_group()
 p2_mutex.add_argument('-m','--message', help='Gist contents from cli as string')
 p2_mutex.add_argument('-f','--file', help='Gist contents from a local file')
@@ -60,7 +60,7 @@ def pretty_print(gist_list):
         print('Description: ', Color.red+gist['Description']+Color.end)
         print('Files      : ', gist['Files'])
         print('Gist ID    : ', Color.white+gist['Gist ID']+Color.end)
-        print('><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><')
+        print(''.center(os.get_terminal_size(1)[0], '~'))
 
 # Get particular gist   https://api.github.com/gists/aa5a315d61ae9438b18d
 #Get gists
@@ -95,7 +95,7 @@ if args.main == 'create':
             print('Gist successfully created')
         else:
             print('Error creating gist. Please use GUI')
-    elif args.file:
+    elif args.file: #Fails if the location of the file is wrong i.e file doesn't exist
         file_ = args.file
         with open(file_, 'r') as f:
             f2s = f.read()

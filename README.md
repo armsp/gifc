@@ -10,8 +10,11 @@
 
 Welcome to the README of **gifc**.  
 
-## NAME
+## ETYMOLOGY
 gi-f-c : **Gi**_sts_ **f**_rom_ **c**_ommand-line_  
+
+## Pronounciation
+gifc: jif - sea
 
 ## ABOUT
 This is a nifty little tool written in Python to work with GitHub Gists from command line. 
