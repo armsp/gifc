@@ -91,3 +91,22 @@ You can get the _gist id_ from the `get` method from earlier
 `gifc delete ffd2f4a482684f56bf33c8726cc6ae63`  
 You can get the _gist id_ from the `get` method from earlier
 
+#### LICENSE
+All the source files are licensed under GNU GLPv3 license. Refer [LICENSE.md](https://github.com/armsp/gifc/blob/master/LICENSE) for more details.  
+
+    Gifc is a tool written in Python to work with GitHub Gists from command line.
+    Copyright (C) 2018  Shantam Raj
+    This code is licensed under GNU GPLv3 license. See LICENSE.md for details
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
