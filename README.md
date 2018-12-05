@@ -70,6 +70,10 @@ This is a nifty little tool written in Python to work with GitHub Gists from com
     - `gifc create create.md -d "How to create a gist from cli" -f file.md`
 
 ### **Update a gist**
+* **Edit all (or some) files iteratively**
+    - `gifc update ffd2f4a482684f56bf33c8726cc6ae63 -i vi`  
+    You can get the _gist id_ from the `get` method from earlier
+
 * **Change description**
     - `gifc update ffd2f4a482684f56bf33c8726cc6ae63 -cd "New description"`  
     You can get the _gist id_ from the `get` method from earlier
