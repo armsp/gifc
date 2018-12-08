@@ -72,7 +72,7 @@ if args.main == 'get':
     number_of_gists = args.number
     print('Getting gists...')
     user_id = get_config_details('GIT_USER_ID')
-    r = requests.get(f'https://api.github.com/users/{user_id}/gists')
+    r = requests.get('https://api.github.com/users/{}/gists'.format(user_id))
     gist_list = []
     for gist in r.json()[:number_of_gists]:
         gist_id = gist['id']
@@ -93,7 +93,7 @@ if args.main == 'create':
         payload = {'description': args.describe, 'public': args.public, 'files':{args.gist_item : {'content': message}}}
         #print(payload)
         r = requests.post(f"https://api.github.com/gists", headers=header, json=payload)
-        print(r.status_code)
+        #print(r.status_code)
         if r.status_code == 201:
             print(r.json()['id'])
             print('Gist successfully created')
@@ -105,7 +105,7 @@ if args.main == 'create':
             f2s = f.read()
         payload = {'description': args.describe, 'public': args.public, 'files':{args.gist_item : {'content': f2s}}}
         r = requests.post(f"https://api.github.com/gists", headers=header, json=payload)
-        print(r.status_code)
+        #print(r.status_code)
         if r.status_code == 201:
             print(r.json()['id'])
             print('Gist successfully created')
@@ -132,7 +132,7 @@ if args.main == 'create':
             print(e)
             exit()
         if r.status_code == 201:
-            print(r.status_code)
+            #print(r.status_code)
             print(r.json()['id'])
             print('Gist successfully created')
         else:
@@ -148,7 +148,7 @@ if args.main == 'update':
     payload = dict()
     #file content changes
     if args.file_name:
-        r = requests.get(f'https://api.github.com/gists/{gid}')
+        r = requests.get('https://api.github.com/gists/{}'.format(gid))
         if r.status_code != 200:
             print('Error getting gist contents for interactive mode')
             exit()
@@ -164,7 +164,7 @@ if args.main == 'update':
         os.remove(n)
     else:
         if args.interactive:
-            get_gist = requests.get(f'https://api.github.com/gists/{gid}')
+            get_gist = requests.get('https://api.github.com/gists/{}'.format(gid))
             gist_files = get_gist.json()['files']
             if len(gist_files) > 1:
                 print(Color.red+'There are multiple files in this gist'+Color.end)
@@ -185,8 +185,8 @@ if args.main == 'update':
     if args.change_description:
         payload['description'] = args.change_description
 
-    r = requests.patch(f'https://api.github.com/gists/{gid}', headers=header, json=payload)
-    print(r.status_code)
+    r = requests.patch('https://api.github.com/gists/{}'.format(gid), headers=header, json=payload)
+    #print(r.status_code)
     if r.status_code == 200:
         print("Gist successfully updated")
     else:
@@ -196,11 +196,11 @@ if args.main == 'update':
 #Delete files or gists
 if args.main == 'delete':
     gid = args.gist_id
-    print(f'Deleting {gid}')
+    print('Deleting {}'.format(gid))
     token = get_config_details('GIT_TOKEN')
-    header = {'Authorization': f'Bearer {token}'}
+    header = {'Authorization': 'Bearer {}'.format(token)}
 
-    r = requests.delete(f'https://api.github.com/gists/{gid}', headers=header)
+    r = requests.delete('https://api.github.com/gists/{}'.format(gid), headers=header)
     #print(r.status_code)
     if r.status_code != 204:
         print('Request not completed. Maybe the gist_id is incorrect. Please try the GUI.')
@@ -210,14 +210,14 @@ if args.main == 'delete':
 if args.main == 'remove':
     gid = args.gist_id
     files = args.remove
-    pprint.pprint(f'Deleting file(s) {files}')
+    pprint.pprint('Deleting file(s) {}'.format(files))
     token = get_config_details('GIT_TOKEN')
-    header = {'Authorization': f'Bearer {token}'}
+    header = {'Authorization': 'Bearer {}'.format(token)}
     #print(files, len(files))
     file_del_payload = dict(zip(files,[None]*len(files)))
     payload = {"files": file_del_payload}
     #print(payload)
-    r = requests.patch(f'https://api.github.com/gists/{gid}', headers=header, json=payload)
+    r = requests.patch('https://api.github.com/gists/{}'.format(gid), headers=header, json=payload)
     #data vs json when you have to pass "null" as json.
     if r.status_code == 422:
         print('You are trying to delete a file that does not exist. Please try again with correct file.')

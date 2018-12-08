@@ -65,7 +65,7 @@ This is a nifty little tool written in Python to work with GitHub Gists from com
 * Create interactively from an editor like **nano**, **vim** or **gedit**
     - ```gifc create create.md -d "How to create a gist from cli" -i nano```
 * Directly enter contents from cli
-    - ```gifc create create.md -d "How to create a gist from cli" -m '''If you want to create a gist from an existing file then you do the following-  `./gifc -c create.md -e "How to create a gist from cli" -i file.md`'''```
+    - ```gifc create create.md -d "How to create a gist from cli" -m '''If you want to create a gist from an existing file then you do the following-  `gifc create create.md -d "How to create a gist from cli" -f file.md`'''```
 * Take the contents from a file
     - `gifc create create.md -d "How to create a gist from cli" -f file.md`
 
@@ -91,7 +91,7 @@ You can get the _gist id_ from the `get` method from earlier
 `gifc delete ffd2f4a482684f56bf33c8726cc6ae63`  
 You can get the _gist id_ from the `get` method from earlier
 
-#### LICENSE
+#### COPYRIGHT and LICENSE
 All the source files are licensed under GNU GLPv3 license. Refer [LICENSE.md](https://github.com/armsp/gifc/blob/master/LICENSE) for more details.  
 
     Gifc is a tool written in Python to work with GitHub Gists from command line.
