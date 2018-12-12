@@ -52,18 +52,19 @@ def get_config_details(key):
         exit()
 
 class Color:
-    red = '\x1b[1;31;47m'
+    red = '\033[91m' #1;31;47m '\033[91m'
     green = '\x1b[1;32;40m'
     yellow = '\x1b[1;33;40m'
     white = '\x1b[1;30;50m'
+    orange = '\33[93m'
     bold = '\033[1m'
     end = '\x1b[0m'
 
 def pretty_print(gist_list):
     for gist in gist_list:
-        print('Description: ', Color.red+gist['Description']+Color.end)
+        print('Description: ', Color.bold+Color.red+gist['Description']+Color.end)
         print('Files      : ', gist['Files'])
-        print('Gist ID    : ', Color.white+gist['Gist ID']+Color.end)
+        print('Gist ID    : ', Color.orange+gist['Gist ID']+Color.end)
         print(''.center(os.get_terminal_size(1)[0], '~'))
 
 # Get particular gist   https://api.github.com/gists/aa5a315d61ae9438b18d
@@ -196,6 +197,10 @@ if args.main == 'update':
 #Delete files or gists
 if args.main == 'delete':
     gid = args.gist_id
+    user_input = input(Color.red+Color.bold+"Are you sure you want to delete {} ? Y/N\n".format(gid)+Color.end)
+    if user_input.lower() != 'y':
+        print(Color.red+"Aborting"+Color.end)
+        exit()
     print('Deleting {}'.format(gid))
     token = get_config_details('GIT_TOKEN')
     header = {'Authorization': 'Bearer {}'.format(token)}
@@ -210,6 +215,10 @@ if args.main == 'delete':
 if args.main == 'remove':
     gid = args.gist_id
     files = args.remove
+    user_input = input(Color.red+Color.bold+"Are you sure you want to delete {} ? Y/N\n".format(files)+Color.end)
+    if user_input.lower() != 'y':
+        print(Color.red+"Aborting"+Color.end)
+        exit()
     pprint.pprint('Deleting file(s) {}'.format(files))
     token = get_config_details('GIT_TOKEN')
     header = {'Authorization': 'Bearer {}'.format(token)}
