@@ -198,6 +198,10 @@ if args.main == 'update':
 if args.main == 'delete':
     gid = args.gist_id
     user_input = input(Color.red+Color.bold+"Are you sure you want to delete {} ? Y/N\n".format(gid)+Color.end)
+    if user_input.lower() not in ('y', 'n'):
+        print("Please enter either y or n")
+        print(Color.red+"Aborting"+Color.end)
+        exit()
     if user_input.lower() != 'y':
         print(Color.red+"Aborting"+Color.end)
         exit()
@@ -216,6 +220,10 @@ if args.main == 'remove':
     gid = args.gist_id
     files = args.remove
     user_input = input(Color.red+Color.bold+"Are you sure you want to delete {} ? Y/N\n".format(files)+Color.end)
+    if user_input.lower() not in ('y', 'n'):
+        print("Please enter either y or n")
+        print(Color.red+"Aborting"+Color.end)
+        exit()
     if user_input.lower() != 'y':
         print(Color.red+"Aborting"+Color.end)
         exit()
