@@ -1,0 +1,6 @@
+.gist_config.yml
+*.pyc
+__pycache__/*
+gifc.egg-info/*
+build/*
+dist/*
